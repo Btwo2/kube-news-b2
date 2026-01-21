@@ -1,0 +1,42 @@
+# version: "3.8"
+
+services:
+  postgres:
+    image: postgres:12.17
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: Pg123
+      POSTGRES_USER: kubenews
+      POSTGRES_DB: kubenews
+    volumes:
+      - postgres_docker_vol:/var/lib/postgresql/data
+    networks:
+      - kube_news_net
+  
+  kube_news:
+    image: btwo2/kube-news-b2:v1
+    build:        # optional build instructions if you want to build the image locally
+      context: ./src
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - kube_news_net
+    environment:
+      DB_PASSWORD: Pg123
+      DB_USERNAME: kubenews
+      DB_DATABASE: kubenews
+      DB_HOST: postgres
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_docker_vol: 
+    # name: postgres_name_vol   #= optional custom name or name of already existing volume
+    # external: true            # if the volume is already created outside of this file
+
+networks:
+  kube_news_net:
+    # external: true           # if the network is already created outside of this file
+    driver: bridge

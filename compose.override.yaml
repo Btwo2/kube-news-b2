@@ -1,0 +1,3 @@
+#services:
+#  kube_news:
+#    image: btwo2/kube-news-b2:v0.0
